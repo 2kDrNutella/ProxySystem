@@ -1,0 +1,12 @@
+################################################
+#
+#              ProxyCore Mysql
+#
+################################################
+
+   host: "Punishment"
+   port: "3306"
+   database: "Punishment"
+   username: "root"
+   password: "password"
+   tables-Created: false

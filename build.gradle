@@ -1,0 +1,69 @@
+plugins {
+    id 'java'
+}
+
+group = 'org.drnutella'
+version = '1.0-SNAPSHOT'
+
+repositories {
+    mavenCentral()
+    maven { url 'https://oss.sonatype.org/content/repositories/snapshots' }
+
+    maven {
+        name = 'minecraft-repo'
+        url = 'https://libraries.minecraft.net/'
+    }
+
+    maven {
+        name = 'luckperms-repo'
+        url = "https://repo.lucko.me"
+    }
+}
+dependencies {
+    implementation 'com.googlecode.json-simple:json-simple:1.1.1'
+    implementation 'commons-io:commons-io:2.11.0'
+    implementation 'com.zaxxer:HikariCP:5.0.1' // Version von HikariCP
+
+    compileOnly 'net.luckperms:api:5.4' // Version der API hinzufügen
+    compileOnly 'org.projectlombok:lombok:1.18.34'
+
+    compileOnly 'com.mojang:authlib:1.5.25'
+
+// https://mvnrepository.com/artifact/net.md-5/bungeecord-api
+    compileOnly 'net.md-5:bungeecord-api:1.20-R0.2'
+}
+jar {
+    compileJava.options.encoding = 'UTF-8'
+    duplicatesStrategy(DuplicatesStrategy.EXCLUDE)
+    manifest {}
+    from {
+        configurations.runtimeClasspath.collect { it.isDirectory() ? it : zipTree(it) }
+    }
+}
+
+
+task buildAPI(type: Jar) {
+    manifest {}
+    archiveBaseName = 'ProxyCore-API'
+
+    duplicatesStrategy = DuplicatesStrategy.EXCLUDE
+
+    def excludedPaths = [
+            '',
+    ]
+
+    from {
+        configurations.runtimeClasspath.collect { it.isDirectory() ? it : zipTree(it) }
+    } {
+        excludedPaths.each { path ->
+            exclude path
+        }
+    }
+
+    from sourceSets.main.output
+
+    excludedPaths.each { path ->
+        exclude path
+    }
+    with jar
+}

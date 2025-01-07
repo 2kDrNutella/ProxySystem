@@ -1,0 +1,14 @@
+################################################
+#
+#              ProxyCore Config
+#
+################################################
+
+   prefix: "§7[§eProxy§7]"
+   motd-normal-line1: "                  &x&6&A&8&C&F&F&lR&x&4&2&6&D&F&F&le&x&1&A&4&E&F&F&lv&x&3&5&6&3&F&F&la&x&4&F&7&7&F&F&ln&x&6&A&8&C&F&F&li&x&4&F&7&7&F&F&lt&x&3&5&6&3&F&F&ly&x&1&A&4&E&F&F&l.&x&3&5&6&3&F&F&ln&x&4&F&7&7&F&F&le&x&6&A&8&C&F&F&lt &r"
+   motd-normal-line2: "                &x&F&F&6&A&6&A&lS&x&F&F&5&3&5&3&lt&x&F&F&3&B&3&B&li&x&F&F&2&4&2&4&ll&x&F&F&3&6&3&6&ll &x&F&F&5&9&5&9&li&x&F&F&6&A&6&A&ln &x&F&F&4&7&4&7&lP&x&F&F&3&6&3&6&lr&x&F&F&2&4&2&4&lo&x&F&F&3&2&3&2&lg&x&F&F&4&0&4&0&lr&x&F&F&4&E&4&E&le&x&F&F&5&C&5&C&ls&x&F&F&6&A&6&A&ls"
+   motd-wartung-line1: "                  &x&2&A&8&C&F&F&lR&x&4&2&6&D&F&F&le&x&1&A&4&E&F&F&lv&x&3&5&6&3&F&F&la&x&4&F&7&7&F&F&ln&x&6&A&8&C&F&F&li&x&4&F&7&7&F&F&lt&x&3&5&6&3&F&F&ly&x&1&A&4&E&F&F&l.&x&3&5&6&3&F&F&ln&x&4&F&7&7&F&F&le&x&6&A&8&C&F&F&lt &r"
+   motd-wartung-line2: "                &x&F&F&6&A&6&A&lS&x&F&F&5&1&5&3&lt&x&F&F&3&B&3&B&li&x&F&F&2&4&2&4&ll&x&F&F&3&6&3&6&ll &x&F&F&5&9&5&9&li&x&F&F&6&A&6&A&ln &x&F&F&4&7&4&7&lP&x&F&F&3&6&3&6&lr&x&F&F&2&4&2&4&lo&x&F&F&3&2&3&2&lg&x&F&F&4&0&4&0&lr&x&F&F&4&E&4&E&le&x&F&F&5&C&5&C&ls&x&F&F&6&A&6&A&ls"
+   teamRanks: "administrator senior content developer moderator test-moderator"
+
+

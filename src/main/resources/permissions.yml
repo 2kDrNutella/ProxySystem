@@ -1,0 +1,15 @@
+################################################
+#
+#              ProxyCore Permissions
+#
+################################################
+
+   proxy-wartung: "proxy.wartung"
+   proxy-teamchat: "proxy.teamchat"
+   proxy-ignore-wartung: "proxy.ignore.maintenance"
+   proxy-find-Player: "proxy.findPlayer"
+   proxy-jumpto-Player: "proxy.jumptoPlayer"
+   proxy-send-all: "proxy.sendAll"
+   proxy-devjoin: "proxy.devjoin"
+   proxy-playerinfo: "proxy.playerinfo"
+   proxy-command-team: "proxy.command.team"
