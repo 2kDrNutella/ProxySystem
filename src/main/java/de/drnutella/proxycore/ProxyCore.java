@@ -2,34 +2,27 @@ package de.drnutella.proxycore;
 
 import de.drnutella.proxycore.commands.*;
 import de.drnutella.proxycore.commands.info.*;
-import de.drnutella.proxycore.data.CacheManager;
-import de.drnutella.proxycore.handler.PermissionHandler;
-import de.drnutella.proxycore.utils.ConfigBuilder;
-import net.md_5.bungee.api.plugin.Plugin;
-import net.md_5.bungee.api.plugin.PluginManager;
 import de.drnutella.proxycore.data.DatabaseManager;
 import de.drnutella.proxycore.data.MySQL;
+import de.drnutella.proxycore.handler.PermissionHandler;
 import de.drnutella.proxycore.listener.LogoutListener;
 import de.drnutella.proxycore.listener.PingListener;
 import de.drnutella.proxycore.listener.PostLoginListener;
+import de.drnutella.proxycore.utils.ConfigBuilder;
+import net.md_5.bungee.api.plugin.Plugin;
+import net.md_5.bungee.api.plugin.PluginManager;
 
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
 public class ProxyCore extends Plugin {
 
+    static ProxyCore instance;
     static MySQL mySQL;
+
     static ExecutorService executorService;
 
-    static ProxyCore instance;
-    static DatabaseManager databaseManager;
-    static CacheManager cacheManager;
-
-    static ConfigBuilder dynamicVariablesConfigBuilder;
-    static ConfigBuilder configBuilder;
-    static ConfigBuilder permissionsBuilder;
-    static ConfigBuilder mySQLBuilder;
-
+    static ConfigBuilder dynamicVariablesConfigBuilder, configBuilder, permissionsBuilder, mySQLBuilder;
     static PermissionHandler permissionHandler;
 
     final PluginManager pluginManager = getProxy().getPluginManager();
@@ -56,10 +49,7 @@ public class ProxyCore extends Plugin {
     }
 
     void loadDatabase(){
-        databaseManager = new DatabaseManager();
-        databaseManager.proxyCoreDatabaseAdapter.createDefaultTables();
-
-        cacheManager = new CacheManager();
+        DatabaseManager.proxyCoreDatabaseAdapter.createDefaultTables();
     }
 
     void loadConfigs(){
@@ -81,15 +71,19 @@ public class ProxyCore extends Plugin {
 
         pluginManager.registerCommand(this, new DiscordCommand());
         pluginManager.registerCommand(this, new ShopCommand());
+        pluginManager.registerCommand(this, new TeamCommand());
         pluginManager.registerCommand(this, new PlayTimeCommand());
         pluginManager.registerCommand(this, new PlayerInfoCommand());
-        pluginManager.registerCommand(this, new TeamCommand());
     }
 
     void registerListener() {
         pluginManager.registerListener(this, new PingListener());
         pluginManager.registerListener(this, new PostLoginListener());
         pluginManager.registerListener(this, new LogoutListener());
+    }
+
+    public static ExecutorService getExternalExecutorService() {
+        return executorService;
     }
 
     public static ConfigBuilder getDynamicVariablesConfigBuilder() {
@@ -100,35 +94,23 @@ public class ProxyCore extends Plugin {
         return configBuilder;
     }
 
-    public static ConfigBuilder getPermissionsBuilder() {
-        return permissionsBuilder;
-    }
-
-    public static PermissionHandler getPermissionHandler() {
-        return permissionHandler;
-    }
-
     public static ConfigBuilder getMySQLBuilder() {
         return mySQLBuilder;
+    }
+
+    public static ConfigBuilder getPermissionsBuilder() {
+        return permissionsBuilder;
     }
 
     public static ProxyCore getInstance() {
         return instance;
     }
 
-    public static ExecutorService getExternalExecutorService() {
-        return executorService;
-    }
-
-    public static CacheManager getCacheManager() {
-        return cacheManager;
-    }
-
-    public static DatabaseManager getDatabaseManager() {
-        return databaseManager;
-    }
-
     public static MySQL getMySQL() {
         return mySQL;
+    }
+
+    public static PermissionHandler getPermissionHandler() {
+        return permissionHandler;
     }
 }

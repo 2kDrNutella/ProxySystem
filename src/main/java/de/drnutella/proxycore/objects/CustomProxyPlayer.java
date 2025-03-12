@@ -1,81 +1,65 @@
 package de.drnutella.proxycore.objects;
 
-import de.drnutella.proxycore.ProxyCore;
-import net.md_5.bungee.api.connection.ProxiedPlayer;
+import de.drnutella.proxycore.data.implementation.UserBasicInformationService;
+import de.drnutella.proxycore.utils.TimeCalculator;
+
+import java.sql.Time;
+import java.util.UUID;
+import java.util.function.Consumer;
 
 public class CustomProxyPlayer {
-    ProxiedPlayer player;
-    int coins;
-    int juweelen;
-    long playtimeInSeconds;
-    long loginTimeInMillis;
+    UUID uuid;
+    UserInformation userInformation;
 
-    public CustomProxyPlayer(ProxiedPlayer player, int coins, int juweelen, long playtimeInSeconds, long loginTimeInMillis) {
-        this.coins = coins;
-        this.juweelen = juweelen;
-        this.loginTimeInMillis = loginTimeInMillis;
-        this.player = player;
-        this.playtimeInSeconds = playtimeInSeconds;
+    public CustomProxyPlayer(String username, Consumer<CustomProxyPlayer> callback) {
+        UserBasicInformationService.getUUIDFromUserName(username, uuidFeedback -> {
+            if (uuidFeedback == null) {
+                callback.accept(null);
+            }else {
+                this.uuid = uuidFeedback;
+            }
 
-        saveCustomPlayerInList();
+            UserBasicInformationService.loadPlayerDatabaseInformation(this.uuid, userInformationFeedback -> {
+                this.userInformation = userInformationFeedback;
+                callback.accept(this);
+            });
+        });
     }
 
-    private void saveCustomPlayerInList(){
-        ProxyCore.getCacheManager().userInformationCache.put(player.getUniqueId(), this);
+    public CustomProxyPlayer(UUID uuid, Consumer<CustomProxyPlayer> callback) {
+        this.uuid = uuid;
+
+        UserBasicInformationService.loadPlayerDatabaseInformation(this.uuid, userInformationFeedback -> {
+            this.userInformation = userInformationFeedback;
+            callback.accept(this);
+        });
     }
 
-    public int getCurrentPlaytime(){
-        return (int) ((System.currentTimeMillis() - getLoginTimeInMillis()) / 1000);
+    public UUID uuid() {
+        return this.uuid;
     }
 
-    public long getRefreshPlaytime(){
-        int currentOnlineTime = (int) ((System.currentTimeMillis() - getLoginTimeInMillis()) / 1000);
-        long savedSeconds = getPlaytimeInSeconds();
-        return savedSeconds + currentOnlineTime;
+    public Long onlineTime(){
+        return ((System.currentTimeMillis() - userInformation.getLoginMillis()) / 1000);
     }
 
-    public int getCoins() {
-        return coins;
+    public String onlineTimeString(){
+        return TimeCalculator.convertSecondsToReadableTime(onlineTime());
     }
 
-    public CustomProxyPlayer setCoins(int coins) {
-        this.coins = coins;
-        return this;
+    public Long loginMillis(){
+        return userInformation.getLoginMillis();
     }
 
-    public int getJuweelen() {
-        return juweelen;
+    public String loginTimestamp(){
+        return userInformation.getLoginTimestamp();
     }
 
-    public CustomProxyPlayer setJuweelen(int juweelen) {
-        this.juweelen = juweelen;
-        return this;
+    public Long playTime(){
+        return userInformation.getPlayTime() + ((System.currentTimeMillis() - userInformation.getLoginMillis()) / 1000);
     }
 
-    public long getLoginTimeInMillis() {
-        return loginTimeInMillis;
-    }
-
-    public CustomProxyPlayer setLoginTimeInMillis(long loginTimeInMillis) {
-        this.loginTimeInMillis = loginTimeInMillis;
-        return this;
-    }
-
-    public ProxiedPlayer getPlayer() {
-        return player;
-    }
-
-    public CustomProxyPlayer setPlayer(ProxiedPlayer player) {
-        this.player = player;
-        return this;
-    }
-
-    public long getPlaytimeInSeconds() {
-        return playtimeInSeconds;
-    }
-
-    public CustomProxyPlayer setPlaytimeInSeconds(long playtimeInSeconds) {
-        this.playtimeInSeconds = playtimeInSeconds;
-        return this;
+    public String playTimeAsString(){
+        return TimeCalculator.convertSecondsToReadableTime(playTime());
     }
 }

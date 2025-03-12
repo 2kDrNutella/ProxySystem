@@ -7,6 +7,11 @@ version = '1.0-SNAPSHOT'
 
 repositories {
     mavenCentral()
+
+    flatDir {
+        dirs '../CastigoFork/build/libs'
+    }
+
     maven { url 'https://oss.sonatype.org/content/repositories/snapshots' }
 
     maven {
@@ -25,9 +30,8 @@ dependencies {
     implementation 'com.zaxxer:HikariCP:5.0.1' // Version von HikariCP
 
     compileOnly 'net.luckperms:api:5.4' // Version der API hinzufügen
-    compileOnly 'org.projectlombok:lombok:1.18.34'
-
     compileOnly 'com.mojang:authlib:1.5.25'
+    compileOnly name: 'Castigo-Database-API-1.0-SNAPSHOT'
 
 // https://mvnrepository.com/artifact/net.md-5/bungeecord-api
     compileOnly 'net.md-5:bungeecord-api:1.20-R0.2'
@@ -49,7 +53,9 @@ task buildAPI(type: Jar) {
     duplicatesStrategy = DuplicatesStrategy.EXCLUDE
 
     def excludedPaths = [
-            '',
+            'de/drnutella/proxycore/commands/**',
+            'de/drnutella/proxycore/handler/**',
+            'de/drnutella/proxycore/listener/**',
     ]
 
     from {

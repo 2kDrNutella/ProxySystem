@@ -14,6 +14,7 @@ public class ConfigBuilder {
 
     private final File file;
     private final Map<String, Object> config;
+
     private final Yaml yaml = new Yaml();
 
     public ConfigBuilder(String path, String filename) {
@@ -69,12 +70,12 @@ public class ConfigBuilder {
         }
     }
 
-    public File getFile() {
-        return file;
-    }
-
     public Map<String, Object> getConfig() {
         return config;
+    }
+
+    public File getFile() {
+        return file;
     }
 
     public void save() {

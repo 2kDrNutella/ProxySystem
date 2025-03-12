@@ -1,13 +1,12 @@
 package de.drnutella.proxycore.commands.info;
 
+import de.drnutella.castigo.data.api.implementation.PunishService;
+import de.drnutella.castigo.objects.PunishInfo;
 import de.drnutella.proxycore.ProxyCore;
+import de.drnutella.proxycore.objects.CustomProxyPlayer;
 import de.drnutella.proxycore.utils.TimeCalculator;
-import de.drnutella.proxycore.utils.configs.ConfigFileAdapter;
 import net.md_5.bungee.api.CommandSender;
 import net.md_5.bungee.api.plugin.Command;
-import de.drnutella.proxycore.objects.CustomProxyPlayer;
-import de.drnutella.proxycore.objects.UserInfoObject;
-import de.drnutella.proxycore.utils.configs.PermissionsFileAdapter;
 
 public class PlayerInfoCommand extends Command {
 
@@ -15,53 +14,55 @@ public class PlayerInfoCommand extends Command {
         super("playerinfo", null, "pi", "playeri");
     }
 
+    // /playerinfo [name]
+
     @Override
-    public void execute(final CommandSender sender, final String[] args) {
-        if (ProxyCore.getPermissionHandler().hasPermission(sender, PermissionsFileAdapter.PERMISSION_PLAYER_INFO)) {
-            if (args.length == 1) {
-                try {
-                    ProxyCore.getDatabaseManager().userInformationDataAdapter.getUUIDByUsername(args[0], uuidfeedback -> {
-                        if (uuidfeedback != null) {
-                            ProxyCore.getDatabaseManager().userInformationDataAdapter.getUserInfoFromDatabaseByUUID(uuidfeedback, args[0], userInfoObject -> {
-                                sender.sendMessage("§7--- §b" + userInfoObject.getUsername() + " §7--- \n");
+    public void execute(final CommandSender commandSender, final String[] args) {
+        if (args.length == 1) {
 
-                                if (ProxyCore.getCacheManager().userInformationCache.containsKey(uuidfeedback)) {
-                                    final CustomProxyPlayer customProxyPlayer = ProxyCore.getCacheManager().userInformationCache.get(uuidfeedback);
-                                    sender.sendMessage(
-                                            "§bLastLogin§7: §f" + userInfoObject.getLastLogin() +
-                                                    " §7(§a§lOnline §7- §b" + customProxyPlayer.getPlayer().getServer().getInfo().getName() +
-                                                    "§7)");
+            new CustomProxyPlayer(args[0], customProxyPlayer -> {
+                if (customProxyPlayer != null) {
 
-                                    sendBasicUserInfos(sender, userInfoObject);
-                                    sender.sendMessage("§bOnline seit§7: §f" +
-                                            TimeCalculator.fromLongToTimeString(customProxyPlayer.getCurrentPlaytime()).toTimeString());
+                    commandSender.sendMessage("§7--- §b" + args[0] + "§7---");
+                    commandSender.sendMessage("§f ➝ §bLastLogin§7: §f" + customProxyPlayer.loginTimestamp());
 
-                                } else {
-                                    sender.sendMessage("§bLastLogin§7: §f" + userInfoObject.getLastLogin() + " §7(§c§lOffline§7)");
-                                    sendBasicUserInfos(sender, userInfoObject);
-                                }
+                    if(ProxyCore.getInstance().getProxy().getPlayer(customProxyPlayer.uuid()) != null) {
+                        commandSender.sendMessage("§f ➝ §bOnline Seit: §f" + customProxyPlayer.onlineTimeString());
+                    }
 
-                                sender.sendMessage("§bPlaytime§7: §f" +
-                                        TimeCalculator.fromLongToTimeString(userInfoObject.getPlaytimeInSeconds()).toTimeString() + "\n");
-                            });
-                        } else {
-                            sender.sendMessage(ConfigFileAdapter.PREFIX + "§cDer User wurde nicht gefunden!");
-                        }
+                    commandSender.sendMessage("§f ➝ §bUUID: §f" + customProxyPlayer.uuid());
+                    PunishService.loadPunishInfoContainer(customProxyPlayer.uuid(), punishInfoContainer -> {
+                        sendMute(punishInfoContainer.lastChatPunish(), commandSender);
+                        sendBan(punishInfoContainer.lastNetworkPunish(), commandSender);
                     });
-
-                } catch (NullPointerException ignored) {
-                    sender.sendMessage(ConfigFileAdapter.PREFIX + "§cDatenbank Fehler, bitte versuche es erneut!");
+                    commandSender.sendMessage("§f ➝ §bPlaytime: §f" + customProxyPlayer.playTimeAsString());
+                    return;
                 }
-            } else {
-                sender.sendMessage(ConfigFileAdapter.PREFIX + "§cFalsche Syntax! Bitte benutzte §b/playerinfo §7[§eName§7]");
-            }
+                commandSender.sendMessage("§cEs wurden keine Daten gefunden!");
+            });
         }
     }
 
-    static void sendBasicUserInfos(CommandSender reciver, UserInfoObject userInfoObject) {
-        reciver.sendMessage("§bUUID§7: §f" + userInfoObject.getUuid());
-        reciver.sendMessage("§bUsername§7: §f" + userInfoObject.getUsername());
-        reciver.sendMessage("§bCoins§7: §f" + userInfoObject.getCoins());
-        reciver.sendMessage("§bJuweelen§7: §f" + userInfoObject.getJuweelen());
+    void sendMute(PunishInfo punishInfo, CommandSender commandSender) {
+        if (punishInfo != null) {
+            if (punishInfo.isActive()) {
+                commandSender.sendMessage("§f ➝ §bMute: §e" + TimeCalculator.convertMillisToReadableTime(punishInfo.remainingTimeMillis()));
+                commandSender.sendMessage("§f ➥ §bGrund: §e" + punishInfo.reason());
+                return;
+            }
+        }
+        commandSender.sendMessage("§f ➝ §bMute: " + "§4✖");
+
+    }
+
+    void sendBan(PunishInfo punishInfo, CommandSender commandSender) {
+        if (punishInfo != null) {
+            if (punishInfo.isActive()) {
+                commandSender.sendMessage("§f ➝ §bBan: §e" + TimeCalculator.convertMillisToReadableTime(punishInfo.remainingTimeMillis()));
+                commandSender.sendMessage("§f ➥ §bGrund: §e" + punishInfo.reason());
+                return;
+            }
+        }
+        commandSender.sendMessage("§f ➝ §bBan: " + "§4✖");
     }
 }

@@ -3,6 +3,11 @@ package de.drnutella.proxycore.commands.info;
 import de.drnutella.proxycore.ProxyCore;
 import de.drnutella.proxycore.utils.StringUtils;
 import de.drnutella.proxycore.utils.configs.ConfigFileAdapter;
+import de.drnutella.proxycore.utils.configs.PermissionsFileAdapter;
+import net.luckperms.api.LuckPerms;
+import net.luckperms.api.LuckPermsProvider;
+import net.luckperms.api.model.group.Group;
+import net.luckperms.api.model.user.User;
 import net.md_5.bungee.api.CommandSender;
 import net.md_5.bungee.api.chat.ClickEvent;
 import net.md_5.bungee.api.chat.HoverEvent;
@@ -10,11 +15,6 @@ import net.md_5.bungee.api.chat.TextComponent;
 import net.md_5.bungee.api.chat.hover.content.Text;
 import net.md_5.bungee.api.connection.ProxiedPlayer;
 import net.md_5.bungee.api.plugin.Command;
-import net.luckperms.api.LuckPerms;
-import net.luckperms.api.LuckPermsProvider;
-import net.luckperms.api.model.group.Group;
-import net.luckperms.api.model.user.User;
-import de.drnutella.proxycore.utils.configs.PermissionsFileAdapter;
 
 import java.util.List;
 

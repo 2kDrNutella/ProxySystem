@@ -1,7 +1,10 @@
 package de.drnutella.proxycore.listener;
 
 import de.drnutella.proxycore.ProxyCore;
+import de.drnutella.proxycore.data.CacheManager;
+import de.drnutella.proxycore.data.implementation.UserBasicInformationService;
 import de.drnutella.proxycore.utils.configs.ConfigFileAdapter;
+import de.drnutella.proxycore.utils.configs.PermissionsFileAdapter;
 import net.luckperms.api.LuckPerms;
 import net.luckperms.api.LuckPermsProvider;
 import net.luckperms.api.model.user.User;
@@ -9,7 +12,6 @@ import net.md_5.bungee.api.connection.ProxiedPlayer;
 import net.md_5.bungee.api.event.PlayerDisconnectEvent;
 import net.md_5.bungee.api.plugin.Listener;
 import net.md_5.bungee.event.EventHandler;
-import de.drnutella.proxycore.utils.configs.PermissionsFileAdapter;
 
 public class LogoutListener implements Listener {
 
@@ -19,8 +21,7 @@ public class LogoutListener implements Listener {
     public void logut(PlayerDisconnectEvent event){
         final ProxiedPlayer player = event.getPlayer();
 
-        ProxyCore.getDatabaseManager().userInformationDataAdapter.refreshPlaytime(player, feedback -> {});
-        ProxyCore.getCacheManager().userInformationCache.remove(player.getUniqueId());
+        UserBasicInformationService.refreshPlaytime(player, feedback ->{});
 
         try {
             if (ProxyCore.getPermissionHandler().hasPermission(player, PermissionsFileAdapter.PERMISSION_COMMAND_TEAM)) {
@@ -38,5 +39,8 @@ public class LogoutListener implements Listener {
             ProxyCore.getInstance().getLogger().warning(" 1. Überprüfe, ob jede Gruppe die in der ProxyCore Config eingetragen ist, vorhanden ist.");
             ProxyCore.getInstance().getLogger().warning(" 2. Überprüfe, ob jede dieser Gruppe in Luckperms einen Prefix hat");
         }
+
+        CacheManager.clearPlayerFromAllCaches(player.getUniqueId());
+        CacheManager.storedUUID.remove(player.getName());
     }
 }

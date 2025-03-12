@@ -1,8 +1,13 @@
 package de.drnutella.proxycore.listener;
 
+import de.drnutella.castigo.data.api.implementation.PunishService;
 import de.drnutella.proxycore.ProxyCore;
+import de.drnutella.proxycore.data.CacheManager;
+import de.drnutella.proxycore.data.dataAdapter.UserBasicInformationDataAdapter;
+import de.drnutella.proxycore.data.implementation.UserBasicInformationService;
 import de.drnutella.proxycore.utils.configs.ConfigFileAdapter;
 import de.drnutella.proxycore.utils.configs.DynamicVariableFileAdapter;
+import de.drnutella.proxycore.utils.configs.PermissionsFileAdapter;
 import net.luckperms.api.LuckPerms;
 import net.luckperms.api.LuckPermsProvider;
 import net.luckperms.api.model.user.User;
@@ -10,7 +15,6 @@ import net.md_5.bungee.api.connection.ProxiedPlayer;
 import net.md_5.bungee.api.event.PostLoginEvent;
 import net.md_5.bungee.api.plugin.Listener;
 import net.md_5.bungee.event.EventHandler;
-import de.drnutella.proxycore.utils.configs.PermissionsFileAdapter;
 
 public class PostLoginListener implements Listener {
 
@@ -25,7 +29,10 @@ public class PostLoginListener implements Listener {
                 return;
             }
         }
-        callDatabase(event.getPlayer());
+
+        CacheManager.storedUUID.put(player.getName(), player.getUniqueId());
+
+        callDatabase(player);
 
         try {
             if (ProxyCore.getPermissionHandler().hasPermission(player, PermissionsFileAdapter.PERMISSION_COMMAND_TEAM)) {
@@ -46,15 +53,22 @@ public class PostLoginListener implements Listener {
     }
 
     static void callDatabase(final ProxiedPlayer caller) {
-        ProxyCore.getDatabaseManager().userInformationDataAdapter.refreshPlayerOrCreateIt(caller, callFeedback -> {
-            if (!callFeedback) {
-                caller.disconnect("§cDatabase Error {1}, please try again");
+        PunishService.loadPunishInfoContainer(caller.getUniqueId(), punishContainer ->  {
+            if(punishContainer.lastNetworkPunish() != null){
+                if(punishContainer.lastNetworkPunish().isActive()){
+                    return;
+                }
             }
-
-            ProxyCore.getDatabaseManager().userInformationDataAdapter.createUserObjectFromDatabase(caller, callFeedback2 -> {
-                if (!callFeedback2) {
+            UserBasicInformationService.refreshPlayerOrCreateIt(caller, callFeedback -> {
+                if (!callFeedback) {
                     caller.disconnect("§cDatabase Error {1}, please try again");
                 }
+
+                UserBasicInformationService.loadPlayerDatabaseInformation(caller.getUniqueId(), callFeedback2  -> {
+                    if(callFeedback2 == null){
+                        caller.disconnect("§cDatabase Error {2}, please try again");
+                    }
+                });
             });
         });
     }

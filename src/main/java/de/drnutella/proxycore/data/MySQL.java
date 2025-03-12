@@ -5,7 +5,8 @@ import com.zaxxer.hikari.HikariDataSource;
 import de.drnutella.proxycore.ProxyCore;
 import de.drnutella.proxycore.utils.ConfigBuilder;
 
-import java.sql.*;
+import java.sql.Connection;
+import java.sql.SQLException;
 
 public class MySQL {
 

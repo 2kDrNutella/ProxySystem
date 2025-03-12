@@ -1,8 +1,8 @@
 package de.drnutella.proxycore.utils.configs;
 
-import net.md_5.bungee.api.ChatColor;
 import de.drnutella.proxycore.ProxyCore;
 import de.drnutella.proxycore.utils.ConfigBuilder;
+import net.md_5.bungee.api.ChatColor;
 
 public class ConfigFileAdapter {
     final static ConfigBuilder builder = ProxyCore.getConfigBuilder();
